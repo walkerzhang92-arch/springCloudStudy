@@ -1,0 +1,16 @@
+server:
+  port: 20004
+
+spring:
+  application:
+    name: auth-service
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:20010/eureka/
+
+
+jwt:
+  secret: "educloud-demo-secret-please-change-32bytes-minimum"
+  expire-seconds: 3600

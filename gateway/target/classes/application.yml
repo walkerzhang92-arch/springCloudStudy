@@ -1,0 +1,48 @@
+server:
+  port: 20000
+
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+#          filters:
+#            - StripPrefix=1
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+#          filters:
+#            - StripPrefix=1
+
+        - id: course-service
+          uri: lb://course-service
+          predicates:
+            - Path=/course/**
+#          filters:
+#            - StripPrefix=1
+
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:20010/eureka/
+
+
+
+jwt:
+  secret: "educloud-demo-secret-please-change-32bytes-minimum"
+  expire-seconds: 3600
+
