@@ -5,6 +5,16 @@ spring:
   application:
     name: order-service
 
+  datasource:
+    url: jdbc:mysql://localhost:23306/educloud?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: edu
+    password: edu123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
 eureka:
   client:
     service-url:
