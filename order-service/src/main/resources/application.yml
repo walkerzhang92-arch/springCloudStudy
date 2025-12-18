@@ -10,6 +10,13 @@ spring:
     username: edu
     password: edu123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    openfeign:
+          client:
+            config:
+              default:
+                connectTimeout: 3000
+                readTimeout: 3000
 
 mybatis:
   configuration:

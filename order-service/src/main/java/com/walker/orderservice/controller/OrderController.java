@@ -1,39 +1,25 @@
 package com.walker.orderservice.controller;
 
+import com.walker.orderservice.common.ApiResult;
+import com.walker.orderservice.dto.CreateOrderResponse;
 import com.walker.orderservice.mapper.OrderMapper;
 import com.walker.orderservice.model.Order;
+import com.walker.orderservice.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/order")
 public class OrderController {
 
-    private final OrderMapper orderMapper;
+    private final OrderService orderService;
 
-    public OrderController(OrderMapper orderMapper) {
-        this.orderMapper = orderMapper;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-    @PostMapping("/order")
-    public Order createOrder(@RequestParam Long courseId,
-                             @RequestHeader(value = "X-USER-ID", required = false) String userIdFromGateway) {
-
-        // 这里先用网关注入的 X-USER-ID；如果没走网关就默认 1
-        Long userId = (userIdFromGateway == null || userIdFromGateway.isBlank())
-                ? 1L : Long.parseLong(userIdFromGateway);
-
-        // 先简单固定金额，后面从 course-service 查课程价格
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setCourseId(courseId);
-        order.setAmount(19900);
-        order.setStatus("NEW");
-
-        orderMapper.insert(order);
-        return order;
-    }
-
-    @GetMapping("/order/{id}")
-    public Order getOrder(@PathVariable Long id) {
-        return orderMapper.findById(id);
+    @PostMapping("/create")
+    public ApiResult<CreateOrderResponse> create(@RequestParam("courseId") Long courseId) {
+        Long userId = 1L; // TODO：下一步接网关透传 header 或 JWT 解析
+        return ApiResult.success(orderService.createOrder(userId, courseId));
     }
 }
