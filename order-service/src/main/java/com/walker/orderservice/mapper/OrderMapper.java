@@ -25,4 +25,14 @@ public interface OrderMapper {
         WHERE id = #{id}
         """)
     TOrder selectById(@Param("id") Long id);
+
+    @Update("""
+        UPDATE t_order
+        SET status = #{toStatus}
+        WHERE id = #{id}
+          AND status = #{fromStatus}
+        """)
+    int updateStatusCas(@Param("id") Long id,
+                        @Param("fromStatus") String fromStatus,
+                        @Param("toStatus") String toStatus);
 }

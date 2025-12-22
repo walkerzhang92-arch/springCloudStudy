@@ -3,7 +3,9 @@ package com.walker.orderservice.service.impl;
 import com.walker.orderservice.common.ApiResult;
 import com.walker.orderservice.dto.CourseDTO;
 import com.walker.orderservice.dto.CreateOrderResponse;
+import com.walker.orderservice.dto.OrderStatusResponse;
 import com.walker.orderservice.entity.TOrder;
+import com.walker.orderservice.enums.OrderStatus;
 import com.walker.orderservice.feign.CourseFeignClient;
 import com.walker.orderservice.mapper.OrderMapper;
 import com.walker.orderservice.service.OrderService;
@@ -47,4 +49,46 @@ public class OrderServiceImpl implements OrderService {
 
         return new CreateOrderResponse(order.getId(), order.getStatus(), order.getAmount());
     }
+
+    @Override
+    public OrderStatusResponse pay(Long orderId) {
+        if (orderId == null || orderId <= 0) throw new IllegalArgumentException("orderId 非法");
+
+        // NEW -> PAID（CAS）
+        int updated = orderMapper.updateStatusCas(orderId, OrderStatus.NEW.name(), OrderStatus.PAID.name());
+        if (updated == 0) {
+            // 更新失败：要么订单不存在，要么状态不是 NEW
+            TOrder current = orderMapper.selectById(orderId);
+            if (current == null) throw new RuntimeException("订单不存在: " + orderId);
+            throw new RuntimeException("订单状态不允许支付，当前状态=" + current.getStatus());
+        }
+
+        return new OrderStatusResponse(orderId, OrderStatus.PAID.name());
+    }
+
+    @Override
+    public OrderStatusResponse cancel(Long orderId) {
+        if (orderId == null || orderId <= 0) throw new IllegalArgumentException("orderId 非法");
+
+        // NEW -> CLOSED（CAS）
+        int updated = orderMapper.updateStatusCas(orderId, OrderStatus.NEW.name(), OrderStatus.CLOSED.name());
+        if (updated == 0) {
+            TOrder current = orderMapper.selectById(orderId);
+            if (current == null) throw new RuntimeException("订单不存在: " + orderId);
+            throw new RuntimeException("订单状态不允许取消，当前状态=" + current.getStatus());
+        }
+
+        return new OrderStatusResponse(orderId, OrderStatus.CLOSED.name());
+    }
+
+    @Override
+    public OrderStatusResponse getStatus(Long orderId) {
+        if (orderId == null || orderId <= 0) throw new IllegalArgumentException("orderId 非法");
+
+        TOrder current = orderMapper.selectById(orderId);
+        if (current == null) throw new RuntimeException("订单不存在: " + orderId);
+
+        return new OrderStatusResponse(orderId, current.getStatus());
+    }
+
 }
