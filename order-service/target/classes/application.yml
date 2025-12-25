@@ -26,3 +26,19 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:20010/eureka/
+
+xxl:
+  job:
+    admin:
+      addresses: http://localhost:28080/xxl-job-admin
+    accessToken: educloud-token-123
+    executor:
+      appname: order-service-executor
+      address: ""
+      ip: ""
+      port: 9999
+      logpath: ./logs/xxl-job
+      logretentiondays: 30
+
+order:
+  expire-minutes: 15

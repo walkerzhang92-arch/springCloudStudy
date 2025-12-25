@@ -35,4 +35,13 @@ public interface OrderMapper {
     int updateStatusCas(@Param("id") Long id,
                         @Param("fromStatus") String fromStatus,
                         @Param("toStatus") String toStatus);
+
+
+    @Update("""
+        UPDATE t_order
+        SET status = 'CLOSED'
+        WHERE status = 'NEW'
+        AND created_at < DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+    """)
+    int closeExpiredOrders(@Param("minutes") int minutes);
 }
