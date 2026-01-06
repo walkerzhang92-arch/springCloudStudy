@@ -143,6 +143,21 @@ CREATE TABLE `xxl_job_user`
   DEFAULT CHARSET = utf8mb4;
 
 
+CREATE TABLE IF NOT EXISTS t_order_event (
+                                             id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                             order_id BIGINT NOT NULL,
+                                             event_type VARCHAR(32) NOT NULL,          -- PAY_LATE_REFUND
+    payload VARCHAR(2048) NOT NULL,           -- 简单 JSON 字符串（先用字符串，够用）
+    status VARCHAR(16) NOT NULL DEFAULT 'NEW',-- NEW/SENT/FAILED
+    retry_count INT NOT NULL DEFAULT 0,
+    next_retry_at DATETIME NOT NULL DEFAULT NOW(),
+    created_at DATETIME NOT NULL DEFAULT NOW(),
+    sent_at DATETIME NULL,
+    UNIQUE KEY uk_order_event (order_id, event_type, status)
+    );
+
+CREATE INDEX idx_event_status_retry ON t_order_event(status, next_retry_at);
+
 ## —————————————————————— for default data ——————————————————
 
 INSERT INTO `xxl_job_group`(`id`, `app_name`, `title`, `address_type`, `address_list`, `update_time`)

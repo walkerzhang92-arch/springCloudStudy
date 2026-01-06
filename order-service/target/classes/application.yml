@@ -2,6 +2,12 @@ server:
   port: 20003
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 25672
+    username: edu
+    password: edu123456
+
   application:
     name: order-service
 
@@ -17,6 +23,7 @@ spring:
               default:
                 connectTimeout: 3000
                 readTimeout: 3000
+
 
 mybatis:
   configuration:

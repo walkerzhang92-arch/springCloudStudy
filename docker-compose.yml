@@ -31,3 +31,15 @@ services:
       PARAMS: "--server.port=8080 --spring.datasource.url=jdbc:mysql://mysql:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=root123456 --spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver --xxl.job.accessToken=educloud-token-123 --spring.mail.host="
     depends_on:
       - mysql
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: educloud-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "25672:5672"    # AMQP
+      - "25673:15672"   # 管理后台
+    environment:
+      RABBITMQ_DEFAULT_USER: edu
+      RABBITMQ_DEFAULT_PASS: edu123456
+      TZ: Asia/Shanghai

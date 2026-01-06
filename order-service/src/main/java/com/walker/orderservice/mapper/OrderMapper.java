@@ -44,4 +44,11 @@ public interface OrderMapper {
         AND created_at < DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
     """)
     int closeExpiredOrders(@Param("minutes") int minutes);
+
+    @Select("""
+        SELECT status
+        FROM t_order
+        WHERE id = #{id}
+        """)
+    String selectStatus(@Param("id") Long id);
 }
